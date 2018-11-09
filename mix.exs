@@ -3,7 +3,7 @@ defmodule Jason.Mixfile do
 
   @version "1.1.2"
 
-  def project() do
+  def project do
     [
       app: :jason,
       version: @version,
@@ -20,13 +20,13 @@ defmodule Jason.Mixfile do
     ]
   end
 
-  def application() do
+  def application do
     [
       extra_applications: []
     ]
   end
 
-  defp deps() do
+  defp deps do
     [
       {:decimal, "~> 1.0", optional: true},
       {:benchee, "~> 0.8", only: :bench},
@@ -42,7 +42,7 @@ defmodule Jason.Mixfile do
     ] ++ maybe_stream_data()
   end
 
-  defp maybe_stream_data() do
+  defp maybe_stream_data do
     if Version.match?(System.version(), "~> 1.5") do
       [{:stream_data, "~> 0.4", only: :test}]
     else
@@ -50,26 +50,26 @@ defmodule Jason.Mixfile do
     end
   end
 
-  defp aliases() do
+  defp aliases do
     [
       "bench.encode": ["run bench/encode.exs"],
       "bench.decode": ["run bench/decode.exs"]
     ]
   end
 
-  defp dialyzer() do
+  defp dialyzer do
     [
       ignore_warnings: "dialyzer.ignore"
     ]
   end
 
-  defp description() do
+  defp description do
     """
     A blazing fast JSON parser and generator in pure Elixir.
     """
   end
 
-  defp package() do
+  defp package do
     [
       maintainers: ["Michał Muskała"],
       licenses: ["Apache 2.0"],
@@ -77,7 +77,7 @@ defmodule Jason.Mixfile do
     ]
   end
 
-  defp docs() do
+  defp docs do
     [
       main: "readme",
       name: "Jason",
