@@ -237,12 +237,13 @@ defmodule Jason.Encode do
     end
   end
 
-  defp camelize(value) when is_binary(value), do: value |> String.split("_", trim: true) |> do_camelize(:first) |> Enum.join()
-  defp camelize(value), do: value |> encode_value() |> camelize()
+  defp camelize(value) when is_binary(value) do
+    <<start::utf8, rest::binary>> = Macro.camelize(value)
+    start = String.downcase(<<start>>)
+    start <> rest
+  end
 
-  defp do_camelize([], _), do: []
-  defp do_camelize([h | t], :first), do: [String.downcase(h) | do_camelize(t, :rest)]
-  defp do_camelize([h | t], _), do: [String.capitalize(h), do_camelize(t, :rest)]
+  defp camelize(value), do: value |> encode_value() |> camelize()
 
   @spec struct(struct, opts) :: iodata
   def struct(%module{} = value, {escape, encode_map}) do
