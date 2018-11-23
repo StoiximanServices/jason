@@ -60,6 +60,21 @@ defmodule Jason.EncoderTest do
     assert to_json(multi_key_map) == ~s({"foo":"foo2","foo":"foo1"})
   end
 
+  test "Map camelCase" do
+    camel_case = [maps: :camel_case]
+
+    assert to_json(%{}) == "{}"
+    assert to_json(%{"foo_bar" => "baz"}, camel_case)  == ~s({"fooBar":"baz"})
+    assert to_json(%{foo_bar: :baz}, camel_case) == ~s({"fooBar":"baz"})
+    assert to_json(%{42 => :bar}, camel_case) == ~s({"42":"bar"})
+    assert to_json(%{'foo_bar' => :baz}, camel_case) == ~s({"fooBar":"baz"})
+
+    assert to_json(%{one_two: true}, camel_case) == ~s({"oneTwo":true})
+    assert to_json(%{One_two_three: true}, camel_case) == ~s({"oneTwoThree":true})
+    assert to_json(%{"one_two" => true}, camel_case) == ~s({"oneTwo":true})
+    assert to_json(%{_one_two: true}, camel_case) == ~s({"oneTwo":true})
+  end
+
   test "list" do
     assert to_json([]) == "[]"
     assert to_json([1, 2, 3]) == "[1,2,3]"

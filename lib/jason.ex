@@ -6,7 +6,7 @@ defmodule Jason do
   alias Jason.{Encode, Decoder, DecodeError, EncodeError, Formatter}
 
   @type escape :: :json | :unicode_safe | :html_safe | :javascript_safe
-  @type maps :: :naive | :strict
+  @type maps :: :naive | :strict | :camel_case
 
   @type encode_opt :: {:escape, escape} | {:maps, maps} | {:pretty, true | Formatter.opts()}
 
@@ -103,6 +103,7 @@ defmodule Jason do
       * `:strict` - checks the encoded map for duplicate keys and raises
         if they appear. For example `%{:foo => 1, "foo" => 2}` would be
         rejected, since both keys would be encoded to the string `"foo"`.
+      * `:camel_case` - formats the map's keys in camelCase format.
       * `:naive` (default) - does not perform the check.
 
     * `:pretty` - controls pretty printing of the output. Possible values are:

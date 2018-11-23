@@ -45,6 +45,7 @@ defmodule Jason.Encode do
     case maps do
       :naive -> &map_naive/3
       :strict -> &map_strict/3
+      :camel_case -> &map_camel_case/3
     end
   end
 
@@ -203,6 +204,46 @@ defmodule Jason.Encode do
          | map_strict_loop(tail, escape, encode_map, visited)]
     end
   end
+
+  defp map_camel_case(value, escape, encode_map) do
+    case Map.to_list(value) do
+      [] -> "{}"
+      [{key, value} | tail] ->
+        key = camelize(key)
+        ["{\"", key(key, escape), "\":",
+         value(value, escape, encode_map)
+         | map_camel_case_loop(tail, escape, encode_map)]
+    end
+  end
+
+  defp map_camel_case_loop([], _escape, _encode_map) do
+    '}'
+  end
+
+  defp map_camel_case_loop([{key, value} | tail], escape, encode_map) do
+    key = camelize(key)
+    [",\"", key(key, escape), "\":",
+     value(value, escape, encode_map)
+     | map_camel_case_loop(tail, escape, encode_map)]
+  end
+
+  defp encode_value(value) do
+    case String.Chars.impl_for(value) do
+      nil ->
+        raise EncodeError, value: value,
+          message: "expected a String.Chars encodable value, got: #{inspect(value)}"
+      impl ->
+        impl.to_string(value)
+    end
+  end
+
+  defp camelize(value) when is_binary(value) do
+    <<start::utf8, rest::binary>> = Macro.camelize(value)
+    start = String.downcase(<<start>>)
+    start <> rest
+  end
+
+  defp camelize(value), do: value |> encode_value() |> camelize()
 
   @spec struct(struct, opts) :: iodata
   def struct(%module{} = value, {escape, encode_map}) do
